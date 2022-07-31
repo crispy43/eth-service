@@ -1,0 +1,1847 @@
+# * 경로 별 API
+paths:
+
+  /network/fee/{network}:
+    # * 수수료 정보 조회
+    get:
+      tags:
+      - "Network"
+      summary: "수수료 정보 조회"
+      description: "최근 블록 네트워크 혼잡도 및 적합한 현재 수수료 비용 조회"
+      parameters:
+      - name: "network"
+        in: "path"
+        description: "블록체인 네트워크 ID"
+        required: true
+        example: "ropsten"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResponseFeeData"
+
+  /network/estimate_gas/{network}:
+    # * 계약 메소드 가스 사용량 측정
+    post:
+      tags:
+      - "Network"
+      summary: "계약 메소드 가스 사용량 측정"
+      description: "계약 메소드 실행할때 예상되는 가스 사용량 측정"
+      parameters:
+      - name: "network"
+        in: "path"
+        description: "블록체인 네트워크 ID"
+        required: true
+        example: "ropsten"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestEstimateGas'
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResponseAmount"
+
+  /network/events/{network}:
+    # * 컨트랙트 이벤트 로그 조회
+    get:
+      tags:
+      - "Network"
+      summary: "컨트랙트 이벤트 로그 조회"
+      description: "컨트랙트의 이벤트 로그 조회"
+      parameters:
+      - name: "network"
+        in: "path"
+        description: "블록체인 네트워크 ID"
+        required: true
+        example: "ropsten"
+      - name: "contractName"
+        in: "query"
+        description: "계약 이름"
+        required: true
+        example: "MultiSend"
+      - name: "contractAddress"
+        in: "query"
+        description: "계약 주소"
+        required: true
+        example: "0x4cda993aa8be8cc2d65e11bb2abd509d422a1fd8"
+      - name: "eventName"
+        in: "query"
+        description: "이벤트 이름 (빈 값일때 전체 이벤트 조회)"
+        required: false
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResponseEvents"
+
+  # /transaction/{network}:
+  #   # * 트랜잭션 조회
+  #   get:
+  #     tags:
+  #     - "Transaction"
+  #     summary: "트랜잭션 데이터 조회"
+  #     description: "트랜잭션을 ethers.js 포멧의 객체 데이터로 조회"
+  #     parameters:
+  #     - name: "network"
+  #       in: "path"
+  #       description: "블록체인 네트워크 ID"
+  #       required: true
+  #       example: "ropsten"
+  #     - name: "transactionHash"
+  #       in: "query"
+  #       description: "트랜잭션 해시"
+  #       required: true
+  #       example: "0xb760cc460d8b351276a5b83feb36dd3cf5f2a122a1fb1f9a003a966750d1096f"
+  #     responses:
+  #       "200":
+  #         description: "OK"
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: "#/components/schemas/ResponseGetEthTransaction"
+
+  /transaction/confirmed/{network}:
+    # * 트랜잭션 컨펌 여부 확인
+    get:
+      tags:
+      - "Transaction"
+      summary: "트랜잭션 컨펌 여부 확인"
+      description: "트랜잭션이 전송 되었는지 confirmations 비교로 확인"
+      parameters:
+      - name: "network"
+        in: "path"
+        description: "블록체인 네트워크 ID"
+        required: true
+        example: "ropsten"
+      - name: "transactionHash"
+        in: "query"
+        description: "트랜잭션 해시"
+        required: true
+        example: "0xb760cc460d8b351276a5b83feb36dd3cf5f2a122a1fb1f9a003a966750d1096f"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResponseBoolean"
+
+  /deploy/erc20/{network}:
+    # * 토큰 생성
+    post:
+      tags:
+      - "Deploy"
+      summary: "토큰 계약 생성"
+      description: "신규 ERC-20 토큰 계약 생성"
+      parameters:
+      - name: "network"
+        in: "path"
+        description: "블록체인 네트워크 ID"
+        required: true
+        example: "ropsten"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestDeployErc20'
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResponseDeploy"
+
+  /deploy/token_time_lock/{network}:
+    # * 신규 토큰 타임 락 계약 생성
+    post:
+      tags:
+      - "Deploy"
+      summary: "토큰 타임 락 계약 생성"
+      description: "신규 토큰 타임 락 계약 생성"
+      parameters:
+      - name: "network"
+        in: "path"
+        description: "블록체인 네트워크 ID"
+        required: true
+        example: "ropsten"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestDeployTokenTimeLock'
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResponseDeploy"
+
+  /deploy/multi_send/{network}:
+    # * 신규 메인넷 코인 멀티 전송 계약 생성
+    post:
+      tags:
+      - "Deploy"
+      summary: "신규 메인넷 코인 멀티 전송 계약 생성"
+      description: "신규 메인넷 코인 멀티 전송 계약 생성"
+      parameters:
+      - name: "network"
+        in: "path"
+        description: "블록체인 네트워크 ID"
+        required: true
+        example: "ropsten"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestDeploy'
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResponseDeploy"
+
+  /deploy/multi_transfer_from/{network}:
+    # * 신규 토큰 멀티 전송 계약 생성
+    post:
+      tags:
+      - "Deploy"
+      summary: "신규 토큰 멀티 전송 계약 생성"
+      description: "신규 토큰 멀티 전송 계약 생성"
+      parameters:
+      - name: "network"
+        in: "path"
+        description: "블록체인 네트워크 ID"
+        required: true
+        example: "ropsten"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestDeploy'
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResponseDeploy"
+
+  /erc20/{network}:
+    # * balance 조회
+    get:
+      tags:
+      - "ERC-20"
+      summary: "balance 조회"
+      description: "address의 토큰 잔액 조회"
+      parameters:
+      - name: "network"
+        in: "path"
+        description: "블록체인 네트워크 ID"
+        required: true
+        example: "ropsten"
+      - name: "contractAddress"
+        in: "query"
+        description: "컨트랙트 주소"
+        required: true
+        example: "0x5cD0c649711E3ecef9762784474Bc6dB02eA0113"
+      - name: "address"
+        in: "query"
+        description: "조회할 주소"
+        required: true
+        example: "0x57e31b6889149f20737d3924a9fd802bcbfd09b6"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResponseAmount"
+
+    # * 토큰 전송
+    post:
+      tags:
+      - "ERC-20"
+      summary: "토큰 전송(transfer)"
+      description: "from 주소에서 to 주소로 토큰 전송하기"
+      parameters:
+      - name: "network"
+        in: "path"
+        description: "블록체인 네트워크 ID"
+        required: true
+        example: "ropsten"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestTransfer'
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResponseSendedEthTransaction"
+
+    # * 토큰 대리 전송
+    put:
+      tags:
+      - "ERC-20"
+      summary: "토큰 대리 전송(transferFrom)"
+      description: "spender가 from 주소에서 to 주소로 토큰 전송하기"
+      parameters:
+      - name: "network"
+        in: "path"
+        description: "블록체인 네트워크 ID"
+        required: true
+        example: "ropsten"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestTransferFrom'
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResponseSendedEthTransaction"
+
+  /erc20/info/{network}:
+    # * 토큰 정보 조회
+    get:
+      tags:
+      - "ERC-20"
+      summary: "토큰 정보 조회"
+      description: "토큰 이름, 심볼, 발행량, 소수점 자리 조회"
+      parameters:
+      - name: "network"
+        in: "path"
+        description: "블록체인 네트워크 ID"
+        required: true
+        example: "ropsten"
+      - name: "contractAddress"
+        in: "query"
+        description: "컨트랙트 주소"
+        required: true
+        example: "0x5cD0c649711E3ecef9762784474Bc6dB02eA0113"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TokenInfo"
+
+  /erc20/allowance/{network}:
+    # * allowance 조회
+    get:
+      tags:
+      - "ERC-20"
+      summary: "allowance 조회"
+      description: "from이 spender에게 approve한 토큰 수량(allowance) 조회"
+      parameters:
+      - name: "network"
+        in: "path"
+        description: "블록체인 네트워크 ID"
+        required: true
+        example: "ropsten"
+      - name: "contractAddress"
+        in: "query"
+        description: "컨트랙트 주소"
+        required: true
+        type: "string"
+        example: "0x5cD0c649711E3ecef9762784474Bc6dB02eA0113"
+      - name: "from"
+        in: "query"
+        description: "from 주소"
+        required: true
+        example: "0xE1a9e80518c9CF1F50369Dab6811D9CD1b289005"
+      - name: "spender"
+        in: "query"
+        description: "spender 주소"
+        required: true
+        example: "0x107ee1C0e276038D925414bd3Fe066CdFa80B554"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResponseAmount"
+
+    # * approve 적용
+    post:
+      tags:
+      - "ERC-20"
+      summary: "approve 적용"
+      description: "from이 spender에게 대리 전송 가능하게 할 수량(allowance)을 허용(approve) 처리"
+      parameters:
+      - name: "network"
+        in: "path"
+        description: "블록체인 네트워크 ID"
+        required: true
+        example: "ropsten"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestApprove'
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResponseSendedEthTransaction"
+
+  /erc20/owner/{network}:
+    # * owner 조회
+    get:
+      tags:
+      - "ERC-20"
+      summary: "owner 조회"
+      description: "토큰의 owner 주소 조회"
+      parameters:
+      - name: "network"
+        in: "path"
+        description: "블록체인 네트워크 ID"
+        required: true
+        example: "ropsten"
+      - name: "contractAddress"
+        in: "query"
+        description: "컨트랙트 주소"
+        required: true
+        example: "0x5cD0c649711E3ecef9762784474Bc6dB02eA0113"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResponseEthAddress"
+
+    # * owner 변경
+    post:
+      tags:
+      - "ERC-20"
+      summary: "owner 변경"
+      description: "토큰의 owner 변경"
+      parameters:
+      - name: "network"
+        in: "path"
+        description: "블록체인 네트워크 ID"
+        required: true
+        example: "ropsten"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestTransferOwnership'
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResponseSendedEthTransaction"
+
+  /erc20/lock/{network}:
+    # * lock 조회
+    get:
+      tags:
+      - "ERC-20"
+      summary: "lock 조회"
+      description: "토큰의 해당 주소 lock 수량과 만료시간 조회"
+      parameters:
+      - name: "network"
+        in: "path"
+        description: "블록체인 네트워크 ID"
+        required: true
+        example: "ropsten"
+      - name: "contractAddress"
+        in: "query"
+        description: "컨트랙트 주소"
+        required: true
+        example: "0x5cD0c649711E3ecef9762784474Bc6dB02eA0113"
+      - name: "address"
+        in: "query"
+        description: "조회할 주소"
+        required: true
+        example: "0x107ee1C0e276038D925414bd3Fe066CdFa80B554"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TokenLock"
+
+    # * lock 적용
+    post:
+      tags:
+      - "ERC-20"
+      summary: "lock 적용"
+      description: "해당 주소에 대한 토큰 lock 처리(락업)"
+      parameters:
+      - name: "network"
+        in: "path"
+        description: "블록체인 네트워크 ID"
+        required: true
+        example: "ropsten"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestSetLock'
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResponseSendedEthTransaction"
+
+  /token_time_lock/{network}:
+    # * 보관 중인 토큰 잔액 조회
+    get:
+      tags:
+      - "Token Time Lock"
+      summary: "보관 중인 토큰 잔액 조회"
+      description: "토큰 타임 락 계약이 락 상태로 보관 중인 토큰 수량 조회"
+      parameters:
+      - name: "network"
+        in: "path"
+        description: "블록체인 네트워크 ID"
+        required: true
+        example: "ropsten"
+      - name: "contractAddress"
+        in: "query"
+        description: "컨트랙트 주소"
+        required: true
+        type: "string"
+        example: "0x4697Fb4c33b29CA7c238f0f22135fa9e2a003ddD"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResponseAmount"
+      
+    # * 토큰 배포
+    post:
+      tags:
+      - "Token Time Lock"
+      summary: "토큰 배포"
+      description: "beneficiary에게 계약 토큰 전체 수량을 전송(releaseTime이 지난 경우에만 가능)"
+      parameters:
+      - name: "network"
+        in: "path"
+        description: "블록체인 네트워크 ID"
+        required: true
+        example: "ropsten"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestReleaseTokenTimeLock'
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResponseSendedEthTransaction"
+
+  /token_time_lock/info/{network}:
+    # * 토큰 타임 락 정보 조회
+    get:
+      tags:
+      - "Token Time Lock"
+      summary: "토큰 타임 락 정보 조회"
+      description: "토큰 타임 락 계약의 토큰 계약 주소, beneficiary(토큰 수령 주소), releaseTime(배포 가능 시간) 조회"
+      parameters:
+      - name: "network"
+        in: "path"
+        description: "블록체인 네트워크 ID"
+        required: true
+        example: "ropsten"
+      - name: "contractAddress"
+        in: "query"
+        description: "컨트랙트 주소"
+        required: true
+        type: "string"
+        example: "0x078fD6Df8f35fef663c8afb7c2beC4629Daaf78e"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResponseTokenTimeLockInfo"
+
+  /multi_send/{network}:
+    # * 계약 코인 잔액 조회
+    get:
+      tags:
+      - "Multi Send"
+      summary: "계약 코인 잔액 조회"
+      description: "메인넷 코인 멀티 전송할 수 있는 계약이 보관 중인 코인 잔액 조회"
+      parameters:
+      - name: "network"
+        in: "path"
+        description: "블록체인 네트워크 ID"
+        required: true
+        example: "ropsten"
+      - name: "contractAddress"
+        in: "query"
+        description: "컨트랙트 주소"
+        required: true
+        type: "string"
+        example: "0x4697Fb4c33b29CA7c238f0f22135fa9e2a003ddD"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResponseAmount"
+
+    # * 멀티 전송
+    post:
+      tags:
+      - "Multi Send"
+      summary: "메인넷 코인 멀티 전송"
+      description: "메인넷 코인 배열 인자로 batch 멀티 전송 실행"
+      parameters:
+      - name: "network"
+        in: "path"
+        description: "블록체인 네트워크 ID"
+        required: true
+        example: "ropsten"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestWithdrawlsMultiSend'
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResponseSendedEthTransaction"
+
+  /multi_send/charge/{network}:
+    # * 코인 충전
+    post:
+      tags:
+      - "Multi Send"
+      summary: "메인넷 코인 계약에 충전"
+      description: "메인넷 코인을 멀티 전송할 계약으로 전송하여 충전"
+      parameters:
+      - name: "network"
+        in: "path"
+        description: "블록체인 네트워크 ID"
+        required: true
+        example: "ropsten"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestCharge'
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResponseSendedEthTransaction"
+
+  /multi_send/owner/{network}:
+    # * owner 조회
+    get:
+      tags:
+      - "Multi Send"
+      summary: "owner 조회"
+      description: "계약의 owner 주소 조회"
+      parameters:
+      - name: "network"
+        in: "path"
+        description: "블록체인 네트워크 ID"
+        required: true
+        example: "ropsten"
+      - name: "contractAddress"
+        in: "query"
+        description: "컨트랙트 주소"
+        required: true
+        example: "0x5cD0c649711E3ecef9762784474Bc6dB02eA0113"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResponseEthAddress"
+
+    # * owner 변경
+    post:
+      tags:
+      - "Multi Send"
+      summary: "owner 변경"
+      description: "계약의 owner 변경"
+      parameters:
+      - name: "network"
+        in: "path"
+        description: "블록체인 네트워크 ID"
+        required: true
+        example: "ropsten"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestTransferOwnership'
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResponseSendedEthTransaction"
+
+  /multi_transfer_from/{network}:
+    # * owner의 토큰 잔액 및 allowance 조회
+    get:
+      tags:
+      - "Multi Transfer From"
+      summary: "owner의 토큰 잔액 및 allowance 조회"
+      description: "계약 owner 주소의 쿼리한 토큰 잔액과 allowance 조회"
+      parameters:
+      - name: "network"
+        in: "path"
+        description: "블록체인 네트워크 ID"
+        required: true
+        example: "ropsten"
+      - name: "contractAddress"
+        in: "query"
+        description: "컨트랙트 주소"
+        required: true
+        type: "string"
+        example: "0x4697Fb4c33b29CA7c238f0f22135fa9e2a003ddD"
+      - name: "tokenAddress"
+        in: "query"
+        description: "토큰 컨트랙트 주소"
+        required: true
+        type: "string"
+        example: "0x4697Fb4c33b29CA7c238f0f22135fa9e2a003ddD"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResponseBalanceAndAllowance"
+
+    # * 멀티 전송
+    post:
+      tags:
+      - "Multi Transfer From"
+      summary: "토큰 멀티 전송"
+      description: "transferFrom 배치 형태의 토큰 멀티 전송 수행. 계약 주소에 대해 approve가 선행되어 있어야함."
+      parameters:
+      - name: "network"
+        in: "path"
+        description: "블록체인 네트워크 ID"
+        required: true
+        example: "ropsten"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestMultiTransferFrom'
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResponseSendedEthTransaction"
+
+  /multi_transfer_from/owner/{network}:
+    # * owner 조회
+    get:
+      tags:
+      - "Multi Transfer From"
+      summary: "owner 조회"
+      description: "계약의 owner 주소 조회"
+      parameters:
+      - name: "network"
+        in: "path"
+        description: "블록체인 네트워크 ID"
+        required: true
+        example: "ropsten"
+      - name: "contractAddress"
+        in: "query"
+        description: "컨트랙트 주소"
+        required: true
+        example: "0x5cD0c649711E3ecef9762784474Bc6dB02eA0113"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResponseEthAddress"
+
+    # * owner 변경
+    post:
+      tags:
+      - "Multi Transfer From"
+      summary: "owner 변경"
+      description: "계약의 owner 변경"
+      parameters:
+      - name: "network"
+        in: "path"
+        description: "블록체인 네트워크 ID"
+        required: true
+        example: "ropsten"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestTransferOwnership'
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResponseSendedEthTransaction"
+
+  /etherscan/history/erc20/{network}:
+    # * 토큰 거래내역 조회
+    get:
+      tags:
+      - "Etherscan"
+      summary: "토큰 거래내역 조회"
+      description: "토큰 거래내역을 이더스캔 API로 조회"
+      parameters:
+      - name: "network"
+        in: "path"
+        description: "블록체인 네트워크 ID"
+        required: true
+        example: "bsc"
+      - name: "contractAddress"
+        in: "query"
+        description: "컨트랙트 주소"
+        required: true
+        example: "0x794a23B6b8A543b58f995ba590979e0785b60EB2"
+      - name: "address"
+        in: "query"
+        description: "조회할 주소"
+        required: false
+        example: "0x7f8dbffd1a51c33076d21e6de842de84fa57f252"
+      - name: "sort"
+        in: "query"
+        description: "정렬 옵션. desc: 내림차순, asc: 오름차순"
+        required: false
+        default: "desc"
+      - name: "offset"
+        in: "query"
+        description: "한 페이지에 불러올 데이터 개수"
+        required: false
+        default: 20
+      - name: "page"
+        in: "query"
+        description: "불러올 페이지 번호"
+        required: false
+        default: 1
+      - name: "maxCount"
+        in: "query"
+        description: "페이징용 전체 트랜잭션 수 조회의 최대치"
+        required: false
+        default: 100
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResponseEtherscanTokenHistory"
+
+# * 데이터 모델
+components:
+  schemas:
+
+    # * TokenInfo
+    TokenInfo:
+      type: "object"
+      properties:
+        code:
+          type: "integer"
+          description: "응답 코드"
+        data:
+          type: "object"
+          description: "응답 결과 데이터"
+          properties:
+            name:
+              type: "string"
+              description: "이름"
+            symbol:
+              type: "string"
+              description: "심볼"
+            decimals:
+              type: "integer"
+              description: "토큰 소수점 자리"
+            totalSupply:
+              type: "string"
+              description: "총 발행량 (소수점 미적용)"
+      example:
+        code: 200
+        data:
+          name: "Blockchain Service Test Token"
+          symbol: "BST"
+          decimals: 18
+          totalSupply: "3000000000000000000000000000"
+
+    # * Tokenlock
+    TokenLock:
+      type: "object"
+      properties:
+        code:
+          type: "integer"
+          description: "응답 코드"
+        data:
+          type: "object"
+          description: "응답 결과 데이터"
+          properties:
+            releaseTime:
+              type: "integer"
+              description: "이름"
+            amount:
+              type: "string"
+              description: "심볼"
+      example:
+        code: 200
+        data:
+          releaseTime: 1652679636
+          amount: "100000000000000000000"
+
+    # * Request Estimate Gas
+    RequestEstimateGas:
+      type: "object"
+      properties:
+        contractName:
+          type: "string"
+          description: "컨트랙트 이름"
+          required: true
+        contractAddress:
+          type: "string"
+          description: "컨트랙트 주소"
+          required: true
+        privateKey:
+          type: "string"
+          description: "실행할 주소 비공개키"
+          required: true
+        methodName:
+          type: "string"
+          description: "메소드 이름 (abi의 함수 호출 이름)"
+          required: true
+        params:
+          type: "array"
+          description: "메소드 인자 배열"
+          required: true
+      example: {
+        "privateKey": "",
+        "contractName": "ERC20Preset",
+        "contractAddress": "0xf2ddae89449b7D26309a5D54614B1FC99C608AF5",
+        "methodName": "transfer",
+        "params": [
+          "0x0d9a8087dc2e0f92ba002f9408a7e104ccd99d55",
+          "100000000000000000000"
+        ]
+      }
+
+    # * Request Transfer
+    RequestTransfer:
+      type: "object"
+      properties:
+        contractAddress:
+          type: "string"
+          description: "컨트랙트 주소"
+          required: true
+        privateKey:
+          type: "string"
+          description: "from 비공개키"
+          required: true
+        to:
+          type: "string"
+          description: "받는 주소"
+          required: true
+        amount:
+          type: "string"
+          description: "전송 수량"
+          required: true
+        maxFeePerGas:
+          type: "string"
+          description: "최대 base fee"
+        maxPriorityFeePerGas:
+          type: "string"
+          description: "최대 tip"
+        gasLimit:
+          type: "string"
+          description: "가스 사용 최대량"
+          required: false
+        gasPrice:
+          type: "string"
+          description: "가스 가격 (레거시 트랜잭션일 경우에만 사용)"
+          required: false
+      example:
+        contractAddress: "0x5cD0c649711E3ecef9762784474Bc6dB02eA0113"
+        privateKey: ""
+        to: "0x107ee1C0e276038D925414bd3Fe066CdFa80B554"
+        amount: "1000000000000000000000"
+        maxFeePerGas: "1500000026"
+        maxPriorityFeePerGas: "1500000000"
+
+    # * Request Transfer From
+    RequestTransferFrom:
+      type: "object"
+      properties:
+        contractAddress:
+          type: "string"
+          description: "컨트랙트 주소"
+          required: true
+        privateKey:
+          type: "string"
+          description: "spender 비공개키"
+          required: true
+        from:
+          type: "string"
+          description: "보내는 주소"
+          required: true
+        to:
+          type: "string"
+          description: "받는 주소"
+          required: true
+        amount:
+          type: "string"
+          description: "전송 수량"
+          required: true
+        maxFeePerGas:
+          type: "string"
+          description: "최대 base fee"
+        maxPriorityFeePerGas:
+          type: "string"
+          description: "최대 tip"
+        gasLimit:
+          type: "string"
+          description: "가스 사용 최대량"
+          required: false
+        gasPrice:
+          type: "string"
+          description: "가스 가격 (레거시 트랜잭션일 경우에만 사용)"
+          required: false
+      example:
+        contractAddress: "0x5cD0c649711E3ecef9762784474Bc6dB02eA0113"
+        privateKey: ""
+        from: "0x00210c5F1884f2f79C6B6Ac864CA253971587143"
+        to: "0x107ee1C0e276038D925414bd3Fe066CdFa80B554"
+        amount: "1000000000000000000000"
+        maxFeePerGas: "1500000026"
+        maxPriorityFeePerGas: "1500000000"
+
+    # * Request Approve
+    RequestApprove:
+      type: "object"
+      properties:
+        contractAddress:
+          type: "string"
+          description: "컨트랙트 주소"
+          required: true
+        privateKey:
+          type: "string"
+          description: "from 비공개키"
+          required: true
+        spender:
+          type: "string"
+          description: "spender 주소"
+          required: true
+        amount:
+          type: "string"
+          description: "approve할 수량(allowance)"
+          required: true
+        maxFeePerGas:
+          type: "string"
+          description: "최대 base fee"
+        maxPriorityFeePerGas:
+          type: "string"
+          description: "최대 tip"
+        gasLimit:
+          type: "string"
+          description: "가스 사용 최대량"
+          required: false
+        gasPrice:
+          type: "string"
+          description: "가스 가격 (레거시 트랜잭션일 경우에만 사용)"
+          required: false
+      example:
+        contractAddress: "0x5cD0c649711E3ecef9762784474Bc6dB02eA0113"
+        privateKey: ""
+        spender: "0x107ee1C0e276038D925414bd3Fe066CdFa80B554"
+        amount: "1000000000000000000000"
+        maxFeePerGas: "1500000026"
+        maxPriorityFeePerGas: "1500000000"
+
+    # * Request Transfer Ownership
+    RequestTransferOwnership:
+      type: "object"
+      properties:
+        contractAddress:
+          type: "string"
+          description: "컨트랙트 주소"
+          required: true
+        privateKey:
+          type: "string"
+          description: "from 비공개키"
+          required: true
+        newOwner:
+          type: "string"
+          description: "새 owner 주소"
+          required: true
+        maxFeePerGas:
+          type: "string"
+          description: "최대 base fee"
+        maxPriorityFeePerGas:
+          type: "string"
+          description: "최대 tip"
+        gasLimit:
+          type: "string"
+          description: "가스 사용 최대량"
+          required: false
+        gasPrice:
+          type: "string"
+          description: "가스 가격 (레거시 트랜잭션일 경우에만 사용)"
+          required: false
+      example:
+        contractAddress: "0x5cD0c649711E3ecef9762784474Bc6dB02eA0113"
+        privateKey: ""
+        newOwner: "0x107ee1C0e276038D925414bd3Fe066CdFa80B554"
+        maxFeePerGas: "1500000026"
+        maxPriorityFeePerGas: "1500000000"
+
+    # * Request Set Lock
+    RequestSetLock:
+      type: "object"
+      properties:
+        contractAddress:
+          type: "string"
+          description: "컨트랙트 주소"
+          required: true
+        privateKey:
+          type: "string"
+          description: "from 비공개키"
+          required: true
+        address:
+          type: "string"
+          description: "lock 적용할 주소"
+          required: true
+        releaseTime:
+          type: "integer"
+          description: "lock 만료 시간 타임스탬프 (ms 단위 미적용)"
+          required: true
+        amount:
+          type: "string"
+          description: "lock 적용할 수량 (소수점 미적용)"
+          required: true
+        maxFeePerGas:
+          type: "string"
+          description: "최대 base fee"
+        maxPriorityFeePerGas:
+          type: "string"
+          description: "최대 tip"
+        gasLimit:
+          type: "string"
+          description: "가스 사용 최대량"
+          required: false
+        gasPrice:
+          type: "string"
+          description: "가스 가격 (레거시 트랜잭션일 경우에만 사용)"
+          required: false
+      example:
+        contractAddress: "0x5cD0c649711E3ecef9762784474Bc6dB02eA0113"
+        privateKey: ""
+        address: "0x107ee1C0e276038D925414bd3Fe066CdFa80B554"
+        releaseTime: 1652679636
+        amount: "100000000000000000000"
+        maxFeePerGas: "1500000026"
+        maxPriorityFeePerGas: "1500000000"
+
+    # * Request Deploy Erc20
+    RequestDeployErc20:
+      type: "object"
+      properties:
+        contractName:
+          type: "string"
+          description: "ERC20 타입 계약 타입"
+          required: false
+          default: "ERC20Preset"
+        privateKey:
+          type: "string"
+          description: "생성 주소 비공개키"
+          required: true
+        name:
+          type: "string"
+          description: "토큰 이름"
+          required: true
+        symbol:
+          type: "string"
+          description: "토큰 심볼"
+          required: true
+        initialSupply:
+          type: "string"
+          description: "토큰 발행량 (소수점 미적용)"
+          required: true
+        owner:
+          type: "string"
+          description: "토큰 생성시 받게 되는 주소"
+          required: true
+        maxFeePerGas:
+          type: "string"
+          description: "최대 base fee"
+          required: false
+        maxPriorityFeePerGas:
+          type: "string"
+          description: "최대 tip"
+          required: false
+        gasLimit:
+          type: "string"
+          description: "가스 사용 최대량"
+          required: false
+        gasPrice:
+          type: "string"
+          description: "가스 가격 (레거시 트랜잭션일 경우에만 사용)"
+          required: false
+      example:
+        privateKey: ""
+        name: "Test Token"
+        symbol: "TTT"
+        initialSupply: "10000000000"
+        owner: "0x3dcC819F5bF5e63B1EC1C30FFb73A23fB52E29Ec"
+        maxFeePerGas: "1500000026"
+        maxPriorityFeePerGas: "1500000000"
+
+    # * Request Withdrawls Multi Send
+    RequestWithdrawlsMultiSend:
+      type: "object"
+      properties:
+        contractAddress:
+          type: "string"
+          description: "컨트랙트 주소"
+          required: true
+        privateKey:
+          type: "string"
+          description: "전송 주소 비공개키(owner)"
+          required: true
+        addresses:
+          type: "array"
+          description: "받는 주소 배열"
+          required: true
+        amounts:
+          type: "array"
+          description: "전송 수량 배열"
+          required: true
+        maxFeePerGas:
+          type: "string"
+          description: "최대 base fee"
+          required: false
+        maxPriorityFeePerGas:
+          type: "string"
+          description: "최대 tip"
+          required: false
+        gasLimit:
+          type: "string"
+          description: "가스 사용 최대량"
+          required: false
+        gasPrice:
+          type: "string"
+          description: "가스 가격 (레거시 트랜잭션일 경우에만 사용)"
+          required: false
+      example: {
+        "contractAddress": "0x0cdbb728190BD3495FBC6b84d5f241655e42D31C",
+        "privateKey": "",
+        "addresses": [
+          "0xaF4d8A75C29D5C6389727e2C648d2c644589B7eE",
+          "0xD982eff436E294af66b43dF2B8deF13587fAcfD0"
+        ],
+        "amounts": [
+          "10000000000000000",
+          "10000000000000000"
+        ],
+        "maxFeePerGas": "2843674308",
+        "maxPriorityFeePerGas": "1500000000"
+      }
+
+    # * Request Charge
+    RequestCharge:
+      type: "object"
+      properties:
+        contractAddress:
+          type: "string"
+          description: "컨트랙트 주소"
+          required: true
+        privateKey:
+          type: "string"
+          description: "전송 주소 비공개키(owner)"
+          required: true
+        amount:
+          type: "string"
+          description: "충전할 코인 수량 (소수점 미적용)"
+          required: true
+        maxFeePerGas:
+          type: "string"
+          description: "최대 base fee"
+          required: false
+        maxPriorityFeePerGas:
+          type: "string"
+          description: "최대 tip"
+          required: false
+        gasLimit:
+          type: "string"
+          description: "가스 사용 최대량"
+          required: false
+        gasPrice:
+          type: "string"
+          description: "가스 가격 (레거시 트랜잭션일 경우에만 사용)"
+          required: false
+      example: {
+        "contractAddress": "0x4cda993aa8be8cc2d65e11bb2abd509d422a1fd8",
+        "privateKey": "",
+        "amount": "1000000000000000000",
+        "maxFeePerGas": "2843674308",
+        "maxPriorityFeePerGas": "1500000000"
+      }
+
+    # * Request Multi Transfer From
+    RequestMultiTransferFrom:
+      type: "object"
+      properties:
+        contractAddress:
+          type: "string"
+          description: "컨트랙트 주소"
+          required: true
+        privateKey:
+          type: "string"
+          description: "전송 주소 비공개키(owner)"
+          required: true
+        tokenAddresses:
+          type: "array"
+          description: "토큰 컨트랙트 주소 배열"
+          required: true
+        fromAddresses:
+          type: "array"
+          description: "보내는 주소 배열"
+          required: true
+        toAddresses:
+          type: "array"
+          description: "받는 주소 배열"
+          required: true
+        amounts:
+          type: "array"
+          description: "전송 수량 배열"
+          required: true
+        maxFeePerGas:
+          type: "string"
+          description: "최대 base fee"
+          required: false
+        maxPriorityFeePerGas:
+          type: "string"
+          description: "최대 tip"
+          required: false
+        gasLimit:
+          type: "string"
+          description: "가스 사용 최대량"
+          required: false
+        gasPrice:
+          type: "string"
+          description: "가스 가격 (레거시 트랜잭션일 경우에만 사용)"
+          required: false
+      example: {
+        "contractAddress": "0xd4f018258a3180d7c39f8800b54069c6971aea53",
+        "privateKey": "",
+        "tokenAddresses": [
+          "0x48e12f53c932fd414ae6331a306121943f513abe",
+          "0x48e12f53c932fd414ae6331a306121943f513abe"
+        ],
+        "fromAddresses": [
+          "0x127d1A8D57fD8f5615De37b9545c2AFcDF008d9e",
+          "0x127d1A8D57fD8f5615De37b9545c2AFcDF008d9e"
+        ],
+        "toAddresses": [
+          "0x41c1F725DB6Bee13d19184a21a39C719d5250Fc0",
+          "0x6E138FEEA981Fc40E8eE092b88db1ca0583fe16C"
+        ],
+        "amounts": [
+          "1",
+          "1"
+        ],
+        "maxFeePerGas": "2541420544",
+        "maxPriorityFeePerGas": "1500000000"
+      }
+
+    # * Request Release Token Time Lock
+    RequestReleaseTokenTimeLock:
+      type: "object"
+      properties:
+        contractAddress:
+          type: "string"
+          description: "컨트랙트 주소"
+          required: true
+        privateKey:
+          type: "string"
+          description: "생성 주소 비공개키"
+          required: true
+        maxFeePerGas:
+          type: "string"
+          description: "최대 base fee"
+          required: false
+        maxPriorityFeePerGas:
+          type: "string"
+          description: "최대 tip"
+          required: false
+        gasLimit:
+          type: "string"
+          description: "가스 사용 최대량"
+          required: false
+        gasPrice:
+          type: "string"
+          description: "가스 가격 (레거시 트랜잭션일 경우에만 사용)"
+          required: false
+      example:
+        contractAddress: "0x078fD6Df8f35fef663c8afb7c2beC4629Daaf78e"
+        privateKey: ""
+        maxFeePerGas: "1500000026"
+        maxPriorityFeePerGas: "1500000000"
+
+    # * Request Deploy Token Time Lock
+    RequestDeployTokenTimeLock:
+      type: "object"
+      properties:
+        privateKey:
+          type: "string"
+          description: "생성 주소 비공개키"
+          required: true
+        tokenAddress:
+          type: "string"
+          description: "보관할 토큰 계약 주소"
+          required: true
+        beneficiary:
+          type: "string"
+          description: "배포시 토큰 수령할 주소"
+          required: true
+        releaseTime:
+          type: "integer"
+          description: "lock 만료 시간 타임스탬프 (ms 단위 미적용)"
+          required: true
+        maxFeePerGas:
+          type: "string"
+          description: "최대 base fee"
+          required: false
+        maxPriorityFeePerGas:
+          type: "string"
+          description: "최대 tip"
+          required: false
+        gasLimit:
+          type: "string"
+          description: "가스 사용 최대량"
+          required: false
+        gasPrice:
+          type: "string"
+          description: "가스 가격 (레거시 트랜잭션일 경우에만 사용)"
+          required: false
+      example:
+        privateKey: ""
+        tokenAddress: "0xa7EcFFa96ec4a8cC17b012D4e657035D7045d925"
+        beneficiary: "0xcC6F89AfE417Bd81da5A06A0069b580191DEc34F"
+        releaseTime: 1653292800
+        maxFeePerGas: "1500000026"
+        maxPriorityFeePerGas: "1500000000"
+
+    # * Request Deploy
+    RequestDeploy:
+      type: "object"
+      properties:
+        privateKey:
+          type: "string"
+          description: "생성 주소 비공개키"
+          required: true
+        maxFeePerGas:
+          type: "string"
+          description: "최대 base fee"
+          required: false
+        maxPriorityFeePerGas:
+          type: "string"
+          description: "최대 tip"
+          required: false
+        gasLimit:
+          type: "string"
+          description: "가스 사용 최대량"
+          required: false
+        gasPrice:
+          type: "string"
+          description: "가스 가격 (레거시 트랜잭션일 경우에만 사용)"
+          required: false
+      example:
+        privateKey: ""
+        maxFeePerGas: "1500000026"
+        maxPriorityFeePerGas: "1500000000"
+
+    # * Response Boolean
+    ResponseBoolean:
+      type: "object"
+      properties:
+        code:
+          type: "integer"
+          description: "응답 코드"
+        data:
+          type: "boolean"
+          description: "결과"
+      example:
+        code: 200
+        data: true
+
+    # * Response Amount
+    ResponseAmount:
+      type: "object"
+      properties:
+        code:
+          type: "integer"
+          description: "응답 코드"
+        data:
+          type: "integer"
+          description: "결과 수량 (소수점 미적용)"
+      example:
+        code: 200
+        data: "1000000000000000000000"
+
+    # * Response Eth Address
+    ResponseEthAddress:
+      type: "object"
+      properties:
+        code:
+          type: "integer"
+          description: "응답 코드"
+        data:
+          type: "string"
+          description: "결과 주소"
+      example:
+        code: 200
+        data: "0xE1a9e80518c9CF1F50369Dab6811D9CD1b289005"
+
+    # * Response Get Eth Transaction
+    ResponseGetEthTransaction:
+      type: "object"
+      properties:
+        code:
+          type: "integer"
+          description: "응답 코드"
+        data:
+          type: "object"
+          description: "트랜잭션 정보 객체"
+      example:
+        code: 200
+        data: {
+          "hash": "0x5367259e61b6b5d5fd01250dfa96fddb8e5a2e9ea983a40168dfa6569ccfd986",
+          "type": 2,
+          "accessList": [],
+          "blockHash": "0xf4cabf6de92c203e12c2d810f956118b33460b02123a71a20fad4904700fd72a",
+          "blockNumber": 16,
+          "transactionIndex": 0,
+          "confirmations": 1,
+          "from": "0x127d1A8D57fD8f5615De37b9545c2AFcDF008d9e",
+          "gasPrice": {
+            "type": "BigNumber",
+            "hex": "0xb545aea8"
+          },
+          "maxPriorityFeePerGas": {
+            "type": "BigNumber",
+            "hex": "0x037e11d600"
+          },
+          "maxFeePerGas": {
+            "type": "BigNumber",
+            "hex": "0xb545aea8"
+          },
+          "gasLimit": {
+            "type": "BigNumber",
+            "hex": "0xa028"
+          },
+          "to": "0x4cDa993aA8Be8CC2d65E11bb2abd509D422A1fd8",
+          "value": {
+            "type": "BigNumber",
+            "hex": "0x0de0b6b3a7640000"
+          },
+          "nonce": 15,
+          "data": "0x",
+          "r": "0x5e593e8733448f4ed52caf4c1017f95d121d5afbaab6dd16629d6ac872974fcd",
+          "s": "0x52fa92f394d1b9bd1e5239890585f3d220ed5e7b785fb1437008df5e8c4ca1a0",
+          "v": 0,
+          "creates": null,
+          "chainId": 1337
+        }
+
+    # * Response Sended Eth Transaction
+    ResponseSendedEthTransaction:
+      type: "object"
+      properties:
+        code:
+          type: "integer"
+          description: "응답 코드"
+        data:
+          type: "object"
+          description: "트랜잭션 정보 객체"
+          properties:
+            transactionHash:
+              type: "string"
+              description: "트랜잭션 해시 값"
+            maxFee:
+              type: "string"
+              description: "사용할 수 있는 최대 수수료(wei)"
+      example:
+        code: 200
+        data:
+          transactionHash: "0x88aee3e26509cb287446dcb786f6539020c85cc41f5dd10f6ab8b27c1c47ab7d"
+          maxFee: "79458000688636"
+
+    # * Response Deploy
+    ResponseDeploy:
+      type: "object"
+      properties:
+        code:
+          type: "integer"
+          description: "응답 코드"
+        data:
+          type: "object"
+          description: "결과 수량 (소수점 미적용)"
+          properties:
+            transactionHash:
+              type: "string"
+              description: "트랜잭션 해시 값"
+            contractAddress:
+              type: "string"
+              description: "컨트랙트 주소(컨펌 확인 전까진 사용 불가)"
+            maxFee:
+              type: "string"
+              description: "사용할 수 있는 최대 수수료(wei)"
+      example:
+        code: 200
+        data: {
+          "transactionHash": "0x88aee3e26509cb287446dcb786f6539020c85cc41f5dd10f6ab8b27c1c47ab7d",
+          "contractAddress": "0xa7EcFFa96ec4a8cC17b012D4e657035D7045d925",
+          "maxFee": "20555880000000000"
+        }
+
+    # * Response Balance And Allowance
+    ResponseBalanceAndAllowance:
+      type: "object"
+      properties:
+        code:
+          type: "integer"
+          description: "응답 코드"
+        data:
+          type: "object"
+          description: "결과 객체"
+          properties:
+            balance:
+              type: "string"
+              description: "토큰 잔액 (소수점 미적용)"
+            allowance:
+              type: "string"
+              description: "대리 전송 허용량 (소수점 미적용)"
+      example:
+        code: 200
+        data: {
+          "balance": "9999999998",
+          "allowance": "999999999999999999998"
+        }
+
+    # * Response Fee Data
+    ResponseFeeData:
+      type: "object"
+      properties:
+        code:
+          type: "integer"
+          description: "응답 코드"
+        data:
+          type: "object"
+          description: "결과 수량 (소수점 미적용)"
+          properties:
+            latestBlockNumber:
+              type: "number"
+              description: "최근 블록 넘버"
+            latestBlockTimestamp:
+              type: "number"
+              description: "최근 블록 생성 시간(타임스탬프)"
+            latestBlockBaseFeePerGas:
+              type: "string"
+              description: "최근 블록의 Base Fee"
+            latestBlockGasLimit:
+              type: "string"
+              description: "네트워크의 가스 사용 최대량"
+            latestBlockGasUsed:
+              type: "string"
+              description: "최근 블록의 가스 사용량"
+            latestBlockGasUsedRate:
+              type: "number"
+              description: "최근 블록의 가스 사용 비율 latestBlockGasUsed / (latestBlockGasLimit / 2)"
+            maxFeePerGas:
+              type: "string"
+              description: "최대 Base Fee(EIP-1599)"
+            maxPriorityFeePerGas:
+              type: "object"
+              description: "최대 Tip(EIP-1599)"
+            gasPrice:
+              type: "string"
+              description: "가스 가격(레거시 트랜잭션)"
+      example:
+        code: 200
+        data: {
+          "latestBlockNumber": 14840225,
+          "latestBlockTimestamp": 1653458630,
+          "latestBlockBaseFeePerGas": "20841091816",
+          "latestBlockGasLimit": "30000000",
+          "latestBlockGasUsed": "4310665",
+          "latestBlockGasUsedRate": 0.28737766666666664,
+          "maxFeePerGas": "43182183632",
+          "maxPriorityFeePerGas": {
+            "slow": "1000000000",
+            "normal": "1500000000",
+            "fast": "2000000000"
+          },
+          "gasPrice": "21841091816"
+        }
+
+    # * Response Events
+    ResponseEvents:
+      type: "object"
+      properties:
+        code:
+          type: "integer"
+          description: "응답 코드"
+        data:
+          type: "array"
+          description: "결과 배열"
+      example:
+        code: 200
+        data: [
+          {
+            "blockNumber": 10,
+            "blockHash": "0x6605592db55c3f2dc3905aa18b161b2bc8ba3df9fa874f4d016c9ba1255ce4a2",
+            "transactionIndex": 0,
+            "removed": false,
+            "address": "0x4cDa993aA8Be8CC2d65E11bb2abd509D422A1fd8",
+            "data": "0x",
+            "topics": [
+              "0x342827c97908e5e2f71151c08502a66d44b6f758e3ac2f1de95f02eb95f0a735",
+              "0x0000000000000000000000000000000000000000000000000000000000000000",
+              "0x000000000000000000000000127d1a8d57fd8f5615de37b9545c2afcdf008d9e"
+            ],
+            "transactionHash": "0xfbaa5ecc9feb8ba5262200b26cb0cbaf3432c52677246611dc294a1fa6087725",
+            "logIndex": 0,
+            "event": "OwnerSet",
+            "eventSignature": "OwnerSet(address,address)",
+            "args": [
+              "0x0000000000000000000000000000000000000000",
+              "0x127d1A8D57fD8f5615De37b9545c2AFcDF008d9e"
+            ]
+          }
+        ]
+
+    # * Response Token Time Lock Info
+    ResponseTokenTimeLockInfo:
+      type: "object"
+      properties:
+        code:
+          type: "integer"
+          description: "응답 코드"
+        data:
+          type: "object"
+          description: "결과 수량 (소수점 미적용)"
+          properties:
+            tokenAddress:
+              type: "string"
+              description: "락 보관하는 토큰의 계약 주소"
+            beneficiary:
+              type: "string"
+              description: "토큰 타임 락 배포시 토큰 전송 받는 주소"
+            releaseTime:
+              type: "integer"
+              description: "배포 가능 시간(락 만료 시간)"
+      example:
+        code: 200
+        data: {
+          "tokenAddress": "0x5cD0c649711E3ecef9762784474Bc6dB02eA0113",
+          "beneficiary": "0x57E31B6889149F20737d3924a9fd802BCBfD09b6",
+          "releaseTime": 1653351300
+        }
+
+    # * Response Etherscan Token History
+    ResponseEtherscanTokenHistory:
+      type: "object"
+      properties:
+        code:
+          type: "integer"
+          description: "응답 코드"
+        data:
+          type: "object"
+          description: "응답 데이터 객체"
+          properties:
+            totalCount:
+              type: "integer"
+              description: "페이징 처리를 위한 전체(최대 100개) 내역 수"
+            history:
+              type: "array"
+              description: "토큰 거래내역 배열"
+              items:
+                type: "object"
+      example:
+        code: 200
+        data: {
+          "totalCount": 1,
+          "history": [
+            {
+              "blockNumber": "12271827",
+              "timeStamp": "1652768925",
+              "hash": "0xbddc2f78c9975a1e124bbe3a4f7a430dd4c5798997df38f9aca48436b2f31cd1",
+              "nonce": "30",
+              "blockHash": "0x6007faae2e018858f07e8d70d5c3f020968b912c64c413bb07d927d6abf2b4a2",
+              "from": "0x57e31b6889149f20737d3924a9fd802bcbfd09b6",
+              "contractAddress": "0x5cd0c649711e3ecef9762784474bc6db02ea0113",
+              "to": "0xe5eb08839e083a9e393fb93464a52db93382d451",
+              "value": "100000000000000000000000000",
+              "tokenName": "Blockchain Service Test Token",
+              "tokenSymbol": "BST",
+              "tokenDecimal": "18",
+              "transactionIndex": "16",
+              "gas": "81079",
+              "gasPrice": "2425417533",
+              "gasUsed": "54053",
+              "cumulativeGasUsed": "5576339",
+              "input": "deprecated",
+              "confirmations": "9951"
+            }
+          ]
+        }
