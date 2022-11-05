@@ -13,7 +13,7 @@ paths:
         in: "path"
         description: "블록체인 네트워크 ID"
         required: true
-        example: "ropsten"
+        example: "goerli"
       responses:
         "200":
           description: "OK"
@@ -34,7 +34,7 @@ paths:
         in: "path"
         description: "블록체인 네트워크 ID"
         required: true
-        example: "ropsten"
+        example: "goerli"
       requestBody:
         content:
           application/json:
@@ -60,7 +60,7 @@ paths:
         in: "path"
         description: "블록체인 네트워크 ID"
         required: true
-        example: "ropsten"
+        example: "goerli"
       - name: "contractName"
         in: "query"
         description: "계약 이름"
@@ -95,7 +95,7 @@ paths:
   #       in: "path"
   #       description: "블록체인 네트워크 ID"
   #       required: true
-  #       example: "ropsten"
+  #       example: "goerli"
   #     - name: "transactionHash"
   #       in: "query"
   #       description: "트랜잭션 해시"
@@ -121,7 +121,7 @@ paths:
         in: "path"
         description: "블록체인 네트워크 ID"
         required: true
-        example: "ropsten"
+        example: "goerli"
       - name: "transactionHash"
         in: "query"
         description: "트랜잭션 해시"
@@ -147,7 +147,7 @@ paths:
         in: "path"
         description: "블록체인 네트워크 ID"
         required: true
-        example: "ropsten"
+        example: "goerli"
       requestBody:
         content:
           application/json:
@@ -173,7 +173,7 @@ paths:
         in: "path"
         description: "블록체인 네트워크 ID"
         required: true
-        example: "ropsten"
+        example: "goerli"
       requestBody:
         content:
           application/json:
@@ -199,7 +199,7 @@ paths:
         in: "path"
         description: "블록체인 네트워크 ID"
         required: true
-        example: "ropsten"
+        example: "goerli"
       requestBody:
         content:
           application/json:
@@ -225,7 +225,7 @@ paths:
         in: "path"
         description: "블록체인 네트워크 ID"
         required: true
-        example: "ropsten"
+        example: "goerli"
       requestBody:
         content:
           application/json:
@@ -251,7 +251,7 @@ paths:
         in: "path"
         description: "블록체인 네트워크 ID"
         required: true
-        example: "ropsten"
+        example: "goerli"
       - name: "contractAddress"
         in: "query"
         description: "컨트랙트 주소"
@@ -281,7 +281,7 @@ paths:
         in: "path"
         description: "블록체인 네트워크 ID"
         required: true
-        example: "ropsten"
+        example: "goerli"
       requestBody:
         content:
           application/json:
@@ -306,7 +306,7 @@ paths:
         in: "path"
         description: "블록체인 네트워크 ID"
         required: true
-        example: "ropsten"
+        example: "goerli"
       requestBody:
         content:
           application/json:
@@ -332,7 +332,7 @@ paths:
         in: "path"
         description: "블록체인 네트워크 ID"
         required: true
-        example: "ropsten"
+        example: "goerli"
       - name: "contractAddress"
         in: "query"
         description: "컨트랙트 주소"
@@ -358,7 +358,7 @@ paths:
         in: "path"
         description: "블록체인 네트워크 ID"
         required: true
-        example: "ropsten"
+        example: "goerli"
       - name: "contractAddress"
         in: "query"
         description: "컨트랙트 주소"
@@ -394,7 +394,7 @@ paths:
         in: "path"
         description: "블록체인 네트워크 ID"
         required: true
-        example: "ropsten"
+        example: "goerli"
       requestBody:
         content:
           application/json:
@@ -420,7 +420,7 @@ paths:
         in: "path"
         description: "블록체인 네트워크 ID"
         required: true
-        example: "ropsten"
+        example: "goerli"
       - name: "contractAddress"
         in: "query"
         description: "컨트랙트 주소"
@@ -445,7 +445,7 @@ paths:
         in: "path"
         description: "블록체인 네트워크 ID"
         required: true
-        example: "ropsten"
+        example: "goerli"
       requestBody:
         content:
           application/json:
@@ -471,7 +471,7 @@ paths:
         in: "path"
         description: "블록체인 네트워크 ID"
         required: true
-        example: "ropsten"
+        example: "goerli"
       - name: "contractAddress"
         in: "query"
         description: "컨트랙트 주소"
@@ -501,7 +501,7 @@ paths:
         in: "path"
         description: "블록체인 네트워크 ID"
         required: true
-        example: "ropsten"
+        example: "goerli"
       requestBody:
         content:
           application/json:
@@ -527,7 +527,7 @@ paths:
         in: "path"
         description: "블록체인 네트워크 ID"
         required: true
-        example: "ropsten"
+        example: "goerli"
       - name: "contractAddress"
         in: "query"
         description: "컨트랙트 주소"
@@ -553,7 +553,7 @@ paths:
         in: "path"
         description: "블록체인 네트워크 ID"
         required: true
-        example: "ropsten"
+        example: "goerli"
       requestBody:
         content:
           application/json:
@@ -579,7 +579,7 @@ paths:
         in: "path"
         description: "블록체인 네트워크 ID"
         required: true
-        example: "ropsten"
+        example: "goerli"
       - name: "contractAddress"
         in: "query"
         description: "컨트랙트 주소"
@@ -606,7 +606,7 @@ paths:
         in: "path"
         description: "블록체인 네트워크 ID"
         required: true
-        example: "ropsten"
+        example: "goerli"
       - name: "contractAddress"
         in: "query"
         description: "컨트랙트 주소"
@@ -632,7 +632,7 @@ paths:
         in: "path"
         description: "블록체인 네트워크 ID"
         required: true
-        example: "ropsten"
+        example: "goerli"
       requestBody:
         content:
           application/json:
@@ -658,7 +658,7 @@ paths:
         in: "path"
         description: "블록체인 네트워크 ID"
         required: true
-        example: "ropsten"
+        example: "goerli"
       requestBody:
         content:
           application/json:
@@ -684,7 +684,7 @@ paths:
         in: "path"
         description: "블록체인 네트워크 ID"
         required: true
-        example: "ropsten"
+        example: "goerli"
       - name: "contractAddress"
         in: "query"
         description: "컨트랙트 주소"
@@ -709,7 +709,7 @@ paths:
         in: "path"
         description: "블록체인 네트워크 ID"
         required: true
-        example: "ropsten"
+        example: "goerli"
       requestBody:
         content:
           application/json:
@@ -735,7 +735,7 @@ paths:
         in: "path"
         description: "블록체인 네트워크 ID"
         required: true
-        example: "ropsten"
+        example: "goerli"
       - name: "contractAddress"
         in: "query"
         description: "컨트랙트 주소"
@@ -767,7 +767,7 @@ paths:
         in: "path"
         description: "블록체인 네트워크 ID"
         required: true
-        example: "ropsten"
+        example: "goerli"
       requestBody:
         content:
           application/json:
@@ -793,7 +793,7 @@ paths:
         in: "path"
         description: "블록체인 네트워크 ID"
         required: true
-        example: "ropsten"
+        example: "goerli"
       - name: "contractAddress"
         in: "query"
         description: "컨트랙트 주소"
@@ -818,7 +818,7 @@ paths:
         in: "path"
         description: "블록체인 네트워크 ID"
         required: true
-        example: "ropsten"
+        example: "goerli"
       requestBody:
         content:
           application/json:

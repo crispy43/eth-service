@@ -7,6 +7,9 @@ const ethereumProvider = new providers.JsonRpcProvider({
 const ropstenProvider = new providers.JsonRpcProvider({
   url: process.env.ROPSTEN_PROVIDER,
 });
+const goerliProvider = new providers.JsonRpcProvider({
+  url: process.env.GOERLI_PROVIDER,
+});
 const kovanProvider = new providers.JsonRpcProvider({
   url: process.env.KOVAN_PROVIDER,
 });
@@ -48,14 +51,17 @@ const getProvider = (network) => {
     case 'local':
       return localProvider;
     case 'ropsten':
-    default:
       return ropstenProvider;
+    case 'goerli':
+    default:
+      return goerliProvider;
   }
 };
 
 module.exports = {
   ethereumProvider,
   ropstenProvider,
+  goerliProvider,
   kovanProvider,
   bscProvider,
   bscTestProvider,

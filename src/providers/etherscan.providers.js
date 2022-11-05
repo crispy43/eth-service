@@ -24,12 +24,16 @@ const getInstance = (network) => {
         prefixUrl: process.env.BSCSCAN_TEST_PROVIDER,
       });
     case 'ropsten':
-    default:
       return got.extend({
         prefixUrl: process.env.ETHERSCAN_ROPSTEN_URI,
         headers: {
           'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36',
         },
+      });
+    case 'goerli':
+    default:
+      return got.extend({
+        prefixUrl: process.env.ETHERSCAN_GOERLI_URI,
       });
   }
 };
@@ -50,8 +54,10 @@ const getApiKey = (network) => {
     case 'bsct':
       return process.env.BSCSCAN_TEST_APIKEY;
     case 'ropsten':
-    default:
       return process.env.ETHERSCAN_ROPSTEN_APIKEY;
+    case 'goerli':
+    default:
+      return process.env.ETHERSCAN_GOERLI_APIKEY;
   }
 };
 
