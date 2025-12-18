@@ -26,7 +26,9 @@ const getFee = catchAsync(async (req, res) => {
         : null,
       maxPriorityFeePerGas: feeData.maxFeePerGas ? {
         slow: process.env.MAX_PRIORITY_FEE_PER_GAS_SLOW,
-        normal: process.env.MAX_PRIORITY_FEE_PER_GAS_NORMAL,
+        normal: feeData.maxPriorityFeePerGas
+          ? feeData.maxPriorityFeePerGas.toString()
+          : process.env.MAX_PRIORITY_FEE_PER_GAS_NORMAL,
         fast: process.env.MAX_PRIORITY_FEE_PER_GAS_FAST,
       } : null,
       gasPrice: feeData.gasPrice.toString(),
